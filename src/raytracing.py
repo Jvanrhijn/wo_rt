@@ -41,9 +41,10 @@ def propagate_to_sphere(height, ray_angle, distance, diameter, radius):
     else:
         z1 = max(roots([a, b, c]))
 
-    r1 = height + z1 + tan(ray_angle)
-    angle_optical_axis_intersect = -asin(r1/(diameter/2))
-    angle_optical_axis_normal = -angle_optical_axis_intersect + ray_angle
+    r1 = height + z1 * abs(tan(ray_angle))
+    angle_optical_axis_intersect = -asin(r1/radius)
+    angle_normal_intersect = -angle_optical_axis_intersect + ray_angle
+
     if diameter < 2*r1:
         raise ValueError(out_of_bounds_msg)
     return z1, r1, angle_normal_intersect, angle_optical_axis_intersect

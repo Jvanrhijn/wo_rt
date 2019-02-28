@@ -1,54 +1,16 @@
 from math import sqrt
 from src.raytracing import propagate_to_flat, snell 
 from src.ray import Ray
+from src.component import SymmetricComponent
+from src.drawable import Drawable
 
 
-class Window:
+class Window(SymmetricComponent, Drawable):
     def __init__(self, position, diameter, thickness, n):
-        self._position = position
-        self._diameter = diameter
+        def propagator(ray, distance):
+            return propagate_to_flat(ray.height, ray.angle, distance, diameter)
+        super().__init__(position, diameter, n, propagator, propagator)
         self._thickness = thickness
-        self._refractive_index = n
-
-    def interact_with(self, ray):
-        distance = self._position - ray.start
-
-        height_intersect, angle_normal_intersect, angle_oa_intersect = propagate_to_flat(
-                ray.height, 
-                ray.angle, 
-                distance, 
-                self._diameter)[1:]
-        ray.extent = sqrt(distance**2 + (height_intersect - ray.height)**2)
-
-        angle_out = snell(
-                angle_normal_intersect, 
-                angle_oa_intersect, 
-                1, 
-                self._refractive_index)
-
-        ray_first = Ray(self._position, angle_out, height_intersect)
-
-        height_intersect, angle_normal_intersect, angle_oa_intersect = propagate_to_flat(
-                ray_first.height,
-                ray_first.angle,
-                self._thickness,
-                self._diameter)[1:]
-
-        ray_first.extent = sqrt(self._thickness**2 
-                + (height_intersect - ray_first.height)**2)
-
-        angle_out = snell(
-                angle_normal_intersect,
-                angle_oa_intersect,
-                self._refractive_index,
-                1)
-
-        ray_second= Ray(
-                self._position + self._thickness, 
-                angle_out, 
-                height_intersect)
-
-        return ray_first, ray_second
 
 
     def draw(self, axis, color, fill=False):
