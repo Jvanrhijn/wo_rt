@@ -8,15 +8,15 @@ class Visualizer:
         self._width, self._height = dims
         self._rays = rays
         self._components = components
-        self._fig, self._ax = plt.subplots(1)
 
-    def draw_all(self, ray_color):
+    def draw_all(self, ray_color, figscale=1):
+        figsize = (figscale*self._width, figscale*self._height)
+        self._fig, self._ax = plt.subplots(1, figsize=figsize)
         self._draw_components('#92f3ff')
         self._draw_rays(ray_color, 0)
         self._ax.grid(True)
-        #self._ax.set_ylim(-self._height/2, self._height/2)
+        self._ax.set_ylim(-self._height/2, self._height/2)
         self._ax.set_xlim(0, self._width)
-        #self._ax.axis('equal')
 
     def _draw_components(self, color):
         for component in self._components:

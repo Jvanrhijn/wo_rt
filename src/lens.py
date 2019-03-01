@@ -1,5 +1,5 @@
 import numpy as np
-from math import sqrt
+from math import sqrt, asin
 from src.component import SymmetricComponent
 from src.drawable import Drawable
 from src.raytracing import propagate_to_sphere, snell
@@ -40,7 +40,7 @@ class Lens(SymmetricComponent, Drawable):
         return self._focal_plane
 
     def draw(self, axis, color, fill=False):
-        theta = self._diameter/(2*self._curvature_radius)
+        theta = asin(self._diameter/(2*self._curvature_radius))
         theta = np.linspace(-theta, theta, 100)
         xs = self._curvature_radius*np.cos(theta)
         xs -= min(xs)
