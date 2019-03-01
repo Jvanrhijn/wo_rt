@@ -1,5 +1,5 @@
 import numpy as np
-from math import sqrt, asin
+from math import sqrt, asin, sin, atan
 from src.component import SymmetricComponent
 from src.drawable import Drawable
 from src.raytracing import propagate_to_sphere, snell
@@ -27,6 +27,7 @@ class Lens(SymmetricComponent, Drawable):
             + (n-1)*self._thickness/(n*curvature_radius**2)))**-1
         self._focal_plane = self._position + self._thickness/2 + self._focal_length
         self._curvature_radius = curvature_radius
+        self._numerical_aperture = sin(atan(diameter/(2*self._focal_length)))
 
     @property
     def focal_length(self):
@@ -39,6 +40,10 @@ class Lens(SymmetricComponent, Drawable):
     @property
     def focal_plane(self):
         return self._focal_plane
+
+    @property
+    def numerical_aperture(self):
+        return self._numerical_aperture
 
     def draw(self, axis, color, fill=False):
         theta = asin(self._diameter/(2*self._curvature_radius))

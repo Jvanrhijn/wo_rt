@@ -1,4 +1,4 @@
-from math import sin, cos
+from math import sin, cos, tan
 
 
 class Ray:
@@ -28,6 +28,9 @@ class Ray:
     @extent.setter
     def extent(self, value):
         self._extent = value
+
+    def as_coordinate_array(self, xcoords):
+        return self._height + tan(self._angle)*(xcoords - self._start)
 
     def draw(self, axis, color, cutoff):
         extent = self._extent if self._extent < float('inf') else cutoff
