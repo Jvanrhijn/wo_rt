@@ -31,7 +31,11 @@ def propagate_to_flat(height, ray_angle, distance, diameter):
 
 
 def propagate_to_sphere(height, ray_angle, distance, diameter, radius):
-    """Compute intersection point of ray with spherical surface"""
+    """Compute intersection point of ray with spherical surface
+    :param: distance Distance to surface midpoin along optical axis
+    :param: diameter Spherical surface extent/diameter of optical component
+    :param: radius Spherical radius of curvature
+    """
     a = 1 + tan(ray_angle)**2
     b = 2*height*tan(ray_angle) - 2*radius - 2*distance
     c = height**2 + 2*distance*radius + distance**2
@@ -41,7 +45,7 @@ def propagate_to_sphere(height, ray_angle, distance, diameter, radius):
     else:
         z1 = max(roots([a, b, c]))
 
-    r1 = height + z1 * abs(tan(ray_angle))
+    r1 = height + z1 * tan(ray_angle)
     angle_optical_axis_intersect = -asin(r1/radius)
     angle_normal_intersect = -angle_optical_axis_intersect + ray_angle
 

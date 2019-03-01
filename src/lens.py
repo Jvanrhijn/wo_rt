@@ -18,7 +18,7 @@ class Lens(SymmetricComponent, Drawable):
 
         def propagator_second(ray, distance):
             thickness = 2*curvature_radius*(1 - sqrt(1 - (diameter/(2*curvature_radius))**2))
-            distance = thickness - ray.start
+            distance = self._position - ray.start + thickness
             return propagate_to_sphere(ray.height, ray.angle, distance, diameter, -curvature_radius) 
 
         super().__init__(position, diameter, n, propagator_first, propagator_second)
@@ -27,9 +27,14 @@ class Lens(SymmetricComponent, Drawable):
     def draw(self, axis, color, fill=False):
         theta = self._diameter/(2*self._curvature_radius)
         theta = np.linspace(-theta, theta, 100)
-        xs = self._curvature_radius*np.cos(theta) - self._curvature_radius + self._thickness/2
+        xs = self._curvature_radius*np.cos(theta)
+        xs -= min(xs)
         ys = self._curvature_radius*np.sin(theta) 
         distance = self._position + self._thickness/2
-        axis.plot(xs + distance, ys, color=color)
-        axis.plot(-xs + distance, ys, color=color)
+        if fill:
+            axis.fill(xs + distance, ys, color=color)
+            axis.fill(-xs + distance, ys, color=color)
+        else:
+            axis.plot(xs + distance, ys, color=color)
+            axis.plot(-xs + distance, ys, color=color)
 

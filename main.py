@@ -8,26 +8,23 @@ from src.visualizer import Visualizer
 
 
 def produce_beam(width, start, nrays, focal_length):
-    rays = []
-    for ray_height in np.linspace(-width/2, width/2, nrays):
-        angle = 0 #-atan(ray_height/(focal_length - start))
-        rays.append(Ray(start, angle, ray_height))
-    return rays
+    return [Ray(start, 0, height) for height in np.linspace(-width/2, width/2, nrays)]
 
 
 if __name__ == "__main__":
     lens = Lens(0.5, 1, 1, 1.5)
+    window = Window(1, 1, 0.001, 1.5)
+
     ray = Ray(0, 0, 0.1)
 
-    #window = Window(0.1, 1, 0.001, 1.5)
-    all_rays = []
     beam = produce_beam(0.5, 0, 10, 0.2)
 
-    for ray in beam:
-        produced_rays = lens.interact_with(ray)
-        for r in [ray, *produced_rays]:
-            all_rays.append(r)
+    lens_inner, lens_free  = lens.interact_with_bundle(beam)
+    window_inner, window_free = window.interact_with_bundle(lens_free)
 
-    visualizer = Visualizer(all_rays, [lens], (2, 2))
+    all_rays = [*beam, *lens_inner, *lens_free, *window_inner, *window_free]
+
+
+    visualizer = Visualizer(all_rays, [lens, window], (2, 2))
     visualizer.draw_all('r')
     plt.show()

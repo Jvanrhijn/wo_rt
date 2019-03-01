@@ -15,6 +15,14 @@ class Component:
     def interact_with(self, ray):
         pass
 
+    @property
+    def position(self):
+        return self._position
+    
+    @property
+    def diameter(self):
+        return self._diameter
+
 
 class SymmetricComponent(Component):
 
@@ -26,36 +34,39 @@ class SymmetricComponent(Component):
     def interact_with(self, ray):
         distance = self._position - ray.start
 
-        height_intersect, angle_normal_intersect, angle_oa_intersect = self._propagator_first(
-                ray,
-                distance)[1:]
-        ray.extent = sqrt(distance**2 + (height_intersect - ray.height)**2)
+        distance_intersect, height_intersect, angle_normal_intersect, angle_oa_intersect = self.\
+                _propagator_first(ray, distance)
 
-        angle_out = snell(
-                angle_normal_intersect, 
+        ray.extent = sqrt(distance_intersect**2 
+                + (height_intersect - ray.height)**2)
+
+        angle_out = snell(angle_normal_intersect, 
                 angle_oa_intersect, 
                 1, 
                 self._refractive_index)
 
-        ray_first = Ray(self._position, angle_out, height_intersect)
+        ray_first = Ray(ray.start + distance_intersect, angle_out, height_intersect)
 
-        height_intersect, angle_normal_intersect, angle_oa_intersect = self._propagator_second(
-                ray_first,
-                self._thickness)[1:]
+        distance = self._position - ray.start + distance_intersect
+        distance_intersect, height_intersect, angle_normal_intersect, angle_oa_intersect = self.\
+                _propagator_second(ray_first, distance)
 
-        ray_first.extent = sqrt(self._thickness**2 
+        ray_first.extent = sqrt(distance_intersect**2 
                + (height_intersect - ray_first.height)**2)
 
-        angle_out = snell(
-                angle_normal_intersect,
+        angle_out = snell(angle_normal_intersect,
                 angle_oa_intersect,
                 self._refractive_index,
                 1)
 
-        ray_second= Ray(
-                self._position + self._thickness, 
+        ray_second = Ray(ray_first.start + distance_intersect,
                 angle_out, 
                 height_intersect)
 
         return ray_first, ray_second
+
+    def interact_with_bundle(self, rays):
+        """Returns list of intermediate rays and free rays"""
+        out = [self.interact_with(ray) for ray in rays]
+        return [pair[0] for pair in out], [pair[1] for pair in out]
 
