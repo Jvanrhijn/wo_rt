@@ -22,7 +22,22 @@ class Lens(SymmetricComponent, Drawable):
             return propagate_to_sphere(ray.height, ray.angle, distance, diameter, -curvature_radius) 
 
         super().__init__(position, diameter, n, propagator_first, propagator_second)
+        self._focal_length = ((n-1)*(2/curvature_radius 
+            + (n-1)*self._thickness/(n*curvature_radius**2)))**-1
+        self._focal_plane = self._position + self._thickness/2 + self._focal_length
         self._curvature_radius = curvature_radius
+
+    @property
+    def focal_length(self):
+        return self._focal_length
+
+    @property
+    def thickness(self):
+        return self._thickness
+
+    @property
+    def focal_plane(self):
+        return self._focal_plane
 
     def draw(self, axis, color, fill=False):
         theta = self._diameter/(2*self._curvature_radius)

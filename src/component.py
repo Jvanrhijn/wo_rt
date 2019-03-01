@@ -23,6 +23,12 @@ class Component:
     def diameter(self):
         return self._diameter
 
+    def interact_with_bundle(self, rays):
+        """Returns list of intermediate rays and free rays"""
+        # can only interact with 'free' rays, i.e. rays that haven't stopped anywhere yet
+        out = [self.interact_with(ray) for ray in rays if ray.extent == float('inf')]
+        return [pair[0] for pair in out] + [pair[1] for pair in out]
+
 
 class SymmetricComponent(Component):
 
@@ -64,9 +70,3 @@ class SymmetricComponent(Component):
                 height_intersect)
 
         return ray_first, ray_second
-
-    def interact_with_bundle(self, rays):
-        """Returns list of intermediate rays and free rays"""
-        out = [self.interact_with(ray) for ray in rays]
-        return [pair[0] for pair in out], [pair[1] for pair in out]
-

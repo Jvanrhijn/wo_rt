@@ -19,10 +19,10 @@ if __name__ == "__main__":
 
     beam = produce_beam(0.5, 0, 10, 0.2)
 
-    lens_inner, lens_free  = lens.interact_with_bundle(beam)
-    window_inner, window_free = window.interact_with_bundle(lens_free)
+    lens_rays = lens.interact_with_bundle(beam)
+    window_rays = window.interact_with_bundle(lens_rays)
 
-    all_rays = [*beam, *lens_inner, *lens_free, *window_inner, *window_free]
+    all_rays = beam + lens_rays + window_rays
 
 
     visualizer = Visualizer(all_rays, [lens, window], (2, 2))
