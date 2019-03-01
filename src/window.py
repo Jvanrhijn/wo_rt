@@ -7,9 +7,13 @@ from src.drawable import Drawable
 
 class Window(SymmetricComponent, Drawable):
     def __init__(self, position, diameter, thickness, n):
-        def propagator(ray, distance):
+        def propagator_first(ray):
+            distance = self._position - ray.start
             return propagate_to_flat(ray.height, ray.angle, distance, diameter)
-        super().__init__(position, diameter, n, propagator, propagator)
+        def propagator_second(ray):
+            distance = thickness
+            return propagate_to_flat(ray.height, ray.angle, distance, diameter)
+        super().__init__(position, diameter, n, propagator_first, propagator_second)
         self._thickness = thickness
 
 

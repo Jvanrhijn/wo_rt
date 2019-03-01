@@ -13,10 +13,11 @@ class Lens(SymmetricComponent, Drawable):
         if diameter > 2*curvature_radius:
             raise ValueError("Impossible lens geometry")
 
-        def propagator_first(ray, distance):
+        def propagator_first(ray):
+            distance = self._position
             return propagate_to_sphere(ray.height, ray.angle, distance, diameter, curvature_radius)
 
-        def propagator_second(ray, distance):
+        def propagator_second(ray):
             thickness = 2*curvature_radius*(1 - sqrt(1 - (diameter/(2*curvature_radius))**2))
             distance = self._position - ray.start + thickness
             return propagate_to_sphere(ray.height, ray.angle, distance, diameter, -curvature_radius) 

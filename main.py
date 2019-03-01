@@ -8,12 +8,13 @@ from src.visualizer import Visualizer
 
 
 def produce_beam(width, start, nrays, focal_length):
-    return [Ray(start, 0, height) for height in np.linspace(-width/2, width/2, nrays)]
+    return [Ray(start, 0.2, height) for height in np.linspace(-width/2, width/2, nrays)]
 
 
 if __name__ == "__main__":
     lens = Lens(0.5, 1, 1, 1.5)
-    window = Window(1, 1, 0.001, 1.5)
+
+    window = Window(1, 1, 0.01, 1.5)
 
     ray = Ray(0, 0, 0.1)
 
@@ -26,5 +27,5 @@ if __name__ == "__main__":
 
 
     visualizer = Visualizer(all_rays, [lens, window], (2, 2))
-    visualizer.draw_all('r')
+    visualizer.draw_all('r', figscale=10)
     plt.show()

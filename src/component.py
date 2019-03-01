@@ -41,7 +41,7 @@ class SymmetricComponent(Component):
         distance = self._position - ray.start
 
         distance_intersect, height_intersect, angle_normal_intersect, angle_oa_intersect = self.\
-                _propagator_first(ray, distance)
+                _propagator_first(ray)
 
         ray.extent = sqrt(distance_intersect**2 
                 + (height_intersect - ray.height)**2)
@@ -53,20 +53,22 @@ class SymmetricComponent(Component):
 
         ray_first = Ray(ray.start + distance_intersect, angle_out, height_intersect)
 
-        distance = self._position - ray.start + distance_intersect
+        #distance = self._position - ray.start + distance_intersect
+        distance = distance_intersect
         distance_intersect, height_intersect, angle_normal_intersect, angle_oa_intersect = self.\
-                _propagator_second(ray_first, distance)
+                _propagator_second(ray_first)
 
         ray_first.extent = sqrt(distance_intersect**2 
                + (height_intersect - ray_first.height)**2)
 
-        angle_out = snell(angle_normal_intersect,
+
+        angle_out_second = snell(angle_normal_intersect,
                 angle_oa_intersect,
                 self._refractive_index,
                 1)
 
         ray_second = Ray(ray_first.start + distance_intersect,
-                angle_out, 
+                angle_out_second, 
                 height_intersect)
 
         return ray_first, ray_second
